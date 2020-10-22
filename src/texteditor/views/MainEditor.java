@@ -36,7 +36,6 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.rtf.RTFEditorKit;
 import texteditor.controller.MainEditorController;
-import texteditor.controller.Threads;
 /**
  *
  * @author ASUS
@@ -250,12 +249,14 @@ public class MainEditor extends javax.swing.JFrame {
         });
         jToolBar1.add(btnUnderline);
 
-        jLabel5.setText("  Size :");
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel5.setText("  Size : ");
         jToolBar1.add(jLabel5);
 
         cbFontSize.setEditable(true);
         cbFontSize.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{
-            "6","8","11","12","14","16","18","20","24","28","32","35"}));
+            "6","8","11","12","14","16","18","20","24","28","32","35",
+            "40","55","60","70"}));
 cbFontSize.setMaximumSize(new java.awt.Dimension(50, 32767));
 cbFontSize.setMinimumSize(new java.awt.Dimension(50, 20));
 cbFontSize.addActionListener(new java.awt.event.ActionListener() {
@@ -265,6 +266,7 @@ cbFontSize.addActionListener(new java.awt.event.ActionListener() {
     });
     jToolBar1.add(cbFontSize);
 
+    jLabel11.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
     jLabel11.setText("  Font : ");
     jToolBar1.add(jLabel11);
 
@@ -379,11 +381,11 @@ cbFontSize.addActionListener(new java.awt.event.ActionListener() {
 
     jLabel1.setText("Col :");
 
-    txtCol.setText("colValue");
+    txtCol.setText("0");
 
     jLabel2.setText("Line : ");
 
-    txtLine.setText("lineValue");
+    txtLine.setText("0");
 
     jLabel4.setText("Char : ");
 
@@ -422,10 +424,20 @@ cbFontSize.addActionListener(new java.awt.event.ActionListener() {
 
     edit_copy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
     edit_copy.setText("Copy");
+    edit_copy.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            edit_copyActionPerformed(evt);
+        }
+    });
     mnEdit.add(edit_copy);
 
     edit_paste.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
     edit_paste.setText("Paste");
+    edit_paste.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            edit_pasteActionPerformed(evt);
+        }
+    });
     mnEdit.add(edit_paste);
 
     jMenuBar1.add(mnEdit);
@@ -646,16 +658,32 @@ cbFontSize.addActionListener(new java.awt.event.ActionListener() {
 
     private void textAreaCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_textAreaCaretUpdate
         // TODO add your handling code here:
-        int line=1, col=1;
-        col=textArea.getCaretPosition();
-        txtCol.setText(textArea.getText());
+        int dot = evt.getDot();
+        try {
+            int line=controller.getLineOfOffset(textArea, dot);
+            txtLine.setText(line+"");
+            int positionInLine = dot - controller.getLineStartOffset(textArea, line);
+            txtCol.setText(positionInLine+"");
+            int charLength=textArea.getDocument().getLength();
+            txtChar.setText(charLength+"");
+        } catch (BadLocationException ex) {
+            Logger.getLogger(MainEditor.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_textAreaCaretUpdate
 
     private void textAreaCaretPositionChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_textAreaCaretPositionChanged
         // TODO add your handling code here:
-        int col=0;
-        txtCol.setText(""+col++);
     }//GEN-LAST:event_textAreaCaretPositionChanged
+
+    private void edit_copyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_copyActionPerformed
+        // TODO add your handling code here:
+        copy(textArea.getSelectedText());
+    }//GEN-LAST:event_edit_copyActionPerformed
+
+    private void edit_pasteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_pasteActionPerformed
+        // TODO add your handling code here:
+        paste(textArea.getDocument());
+    }//GEN-LAST:event_edit_pasteActionPerformed
 
     /**
      * @param args the command line arguments
