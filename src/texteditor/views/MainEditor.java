@@ -15,8 +15,10 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
@@ -48,6 +50,12 @@ public class MainEditor extends javax.swing.JFrame {
      * Creates new form MainEditor
      */
     public MainEditor() {
+        // set app icon
+        URL iconURL = getClass().getResource("/assets/app_logo.png");
+        ImageIcon icon = new ImageIcon(iconURL);
+        setIconImage(icon.getImage());
+        //set start window position
+        setLocation(200, 100);
         controller = new MainEditorController(this);
         graphicEnvironment=GraphicsEnvironment.getLocalGraphicsEnvironment();
         rtf=new RTFEditorKit();
@@ -153,6 +161,7 @@ public class MainEditor extends javax.swing.JFrame {
         popUpRightClick.add(popDelete);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("MyEditor");
         setMinimumSize(new java.awt.Dimension(900, 480));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {

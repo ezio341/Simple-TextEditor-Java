@@ -67,7 +67,7 @@ public class MainEditorController {
         String par = doc.getText(0, doc.getLength());
         String[] words = par.split("\\s+");
         int countWord=0;
-        if(doc.getLength()<=0){
+        if(doc.getLength()<=1){
             countWord=0;
         }else{
             for(String s : words)countWord++;
@@ -81,15 +81,15 @@ public class MainEditorController {
         FileNameExtensionFilter rtfFilter = new FileNameExtensionFilter("rtf files (*.rtf)", "rtf");
         // add filters
         loadFile.addChoosableFileFilter(rtfFilter);
-        
         if (loadFile.showSaveDialog(view) == JFileChooser.APPROVE_OPTION) {
             HTMLEditorKit kit = new HTMLEditorKit();
             BufferedOutputStream out;
             try {
                 out = new BufferedOutputStream(new FileOutputStream(loadFile.getSelectedFile().getAbsoluteFile()+".rtf"));
-
+                
                 kit.write(out, doc, doc.getStartPosition().getOffset(), doc.getLength());
-
+                JOptionPane.showMessageDialog(view, "File Saved.", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
             } catch (FileNotFoundException e) {
             } catch (IOException e){
             }
@@ -107,17 +107,11 @@ public class MainEditorController {
         if(JFileChooser.OPEN_DIALOG == loadFile.showOpenDialog(view)){
             PushbackReader reader=null;
             try {
-                OutputStream os = new ByteArrayOutputStream();
                 HTMLEditorKit htmledit = new HTMLEditorKit();
-                HTMLDocument doc2 = new HTMLDocument();
-                StyledEditorKit kit =new StyledEditorKit();
+                HTMLDocument doc2 = new HTMLDocument(new HTMLDocument().getStyleSheet());
                 reader = new PushbackReader(new InputStreamReader(new FileInputStream(loadFile.getSelectedFile())));
                 htmledit.read(reader, doc2, 0);
-                
                 doc1.insertString(0, doc2.getText(0, doc2.getLength()), null);
-
-                JOptionPane.showMessageDialog(view, "File berhasil dibaca.", 
-                        "Informasi", JOptionPane.INFORMATION_MESSAGE);
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(MainEditorController.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
