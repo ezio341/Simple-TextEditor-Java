@@ -25,12 +25,10 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.html.HTMLEditorKit;
@@ -41,12 +39,11 @@ import texteditor.controller.MainEditorController;
  * @author ASUS
  */
 public class MainEditor extends javax.swing.JFrame {
-    private MainEditorController controller;
-    private HTMLEditorKit kit;
-    private RTFEditorKit rtf;
-    private StyleContext context;
-    private GraphicsEnvironment graphicEnvironment;
-    private SimpleAttributeSet defaultAttrib, FontAttrib, alligmentAttrib, size;
+    private final MainEditorController controller;
+    private final RTFEditorKit rtf;
+    private final StyleContext context;
+    private final GraphicsEnvironment graphicEnvironment;
+    private final SimpleAttributeSet defaultAttrib, FontAttrib, alligmentAttrib;
         
     /**
      * Creates new form MainEditor
@@ -58,17 +55,14 @@ public class MainEditor extends javax.swing.JFrame {
         defaultAttrib = new SimpleAttributeSet();
         FontAttrib = new SimpleAttributeSet();
         alligmentAttrib = new SimpleAttributeSet();
-        size = new SimpleAttributeSet();
         
         initComponents();
-        kit = new HTMLEditorKit();
         textArea.setEditorKit(rtf);
         context = new StyleContext();
 
         //set default Style
         StyleConstants.setFontFamily(defaultAttrib, "Arial");
         textArea.setCharacterAttributes(defaultAttrib, true);
-        
     }
 
 
@@ -115,6 +109,8 @@ public class MainEditor extends javax.swing.JFrame {
         txtLine = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         txtChar = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        txtWords = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         mnFile = new javax.swing.JMenu();
         file_open = new javax.swing.JMenuItem();
@@ -389,7 +385,11 @@ cbFontSize.addActionListener(new java.awt.event.ActionListener() {
 
     jLabel4.setText("Char : ");
 
-    txtChar.setText("charValue");
+    txtChar.setText("0");
+
+    jLabel3.setText("Words : ");
+
+    txtWords.setText("0");
 
     jMenuBar1.setOpaque(false);
 
@@ -467,10 +467,14 @@ cbFontSize.addActionListener(new java.awt.event.ActionListener() {
                     .addComponent(jLabel2)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(txtLine)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGap(18, 18, 18)
                     .addComponent(jLabel4)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(txtChar)
+                    .addGap(18, 18, 18)
+                    .addComponent(jLabel3)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(txtWords)
                     .addGap(0, 0, Short.MAX_VALUE)))
             .addContainerGap())
     );
@@ -490,7 +494,9 @@ cbFontSize.addActionListener(new java.awt.event.ActionListener() {
                 .addComponent(jLabel2)
                 .addComponent(txtLine)
                 .addComponent(jLabel4)
-                .addComponent(txtChar))
+                .addComponent(txtChar)
+                .addComponent(jLabel3)
+                .addComponent(txtWords))
             .addContainerGap())
     );
 
@@ -666,6 +672,7 @@ cbFontSize.addActionListener(new java.awt.event.ActionListener() {
             txtCol.setText(positionInLine+"");
             int charLength=textArea.getDocument().getLength();
             txtChar.setText(charLength+"");
+            txtWords.setText(controller.getWordsNumber(textArea)+"");
         } catch (BadLocationException ex) {
             Logger.getLogger(MainEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -701,22 +708,16 @@ cbFontSize.addActionListener(new java.awt.event.ActionListener() {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainEditor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainEditor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainEditor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MainEditor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        
+        //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MainEditor().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new MainEditor().setVisible(true);
         });
     }
     private void copy(String selectedText){
@@ -730,11 +731,7 @@ cbFontSize.addActionListener(new java.awt.event.ActionListener() {
         if(t.isDataFlavorSupported(DataFlavor.stringFlavor)){
             try {
                 doc.insertString(textArea.getCaretPosition(), t.getTransferData(DataFlavor.stringFlavor).toString(),FontAttrib);
-            } catch (UnsupportedFlavorException ex) {
-                Logger.getLogger(MainEditor.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(MainEditor.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (BadLocationException ex) {
+            } catch (UnsupportedFlavorException | IOException | BadLocationException ex) {
                 Logger.getLogger(MainEditor.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -759,6 +756,7 @@ cbFontSize.addActionListener(new java.awt.event.ActionListener() {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -781,6 +779,7 @@ cbFontSize.addActionListener(new java.awt.event.ActionListener() {
     private javax.swing.JLabel txtChar;
     private javax.swing.JLabel txtCol;
     private javax.swing.JLabel txtLine;
+    private javax.swing.JLabel txtWords;
     // End of variables declaration//GEN-END:variables
 
     public JButton getBtnBold() {
@@ -865,8 +864,5 @@ cbFontSize.addActionListener(new java.awt.event.ActionListener() {
 
     public JLabel getTxtCol() {
         return txtCol;
-    }
-        public HTMLEditorKit getKit() {
-        return kit;
     }
 }

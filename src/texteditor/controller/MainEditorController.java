@@ -6,13 +6,11 @@
 package texteditor.controller;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PushbackReader;
@@ -25,12 +23,10 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
-import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.rtf.RTFEditorKit;
 import texteditor.views.MainEditor;
 /**
  *
@@ -65,6 +61,18 @@ public class MainEditorController {
             Element lineElem = map.getElement(line);
             return lineElem.getStartOffset();
         }
+    }
+    public int getWordsNumber(JTextComponent comp) throws BadLocationException{
+        Document doc = comp.getDocument();
+        String par = doc.getText(0, doc.getLength());
+        String[] words = par.split("\\s+");
+        int countWord=0;
+        if(doc.getLength()<=0){
+            countWord=0;
+        }else{
+            for(String s : words)countWord++;
+        }
+        return countWord;
     }
     
     public void save() throws BadLocationException{
@@ -117,6 +125,4 @@ public class MainEditorController {
             }
         }
     }
-
-    
 }
